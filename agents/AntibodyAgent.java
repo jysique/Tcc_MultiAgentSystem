@@ -8,8 +8,6 @@ import classes.Virus;
 import jade.core.AID;
 import static classes.Antibody.StatusAntibody.MOVING;
 import static classes.Antibody.StatusAntibody.GOINGTO;
-import classes.BCell;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import java.util.Arrays;
 import java.util.Map;
@@ -78,6 +76,7 @@ public class AntibodyAgent extends EntityAgent {
             Virus v = entry.getValue();
             if(Functions.isClose(getLocal().position, v.position) &&  v.status!=Virus.StatusVirus.DEAD){
                 v.status = Virus.StatusVirus.DEAD;
+                //System.out.println(HostAgent.number_of_I_cells);
                 ACLMessage m_to_antibody = new ACLMessage(ACLMessage.INFORM);
                 m_to_antibody.setContent("ATTACK:" + v.position.getX() + ":" + v.position.getY());
                 for(Map.Entry<String,Antibody> entry_a : Antibody.getAntibodies().entrySet()){
