@@ -11,7 +11,7 @@ public class NCell extends Cell {
     public static TreeMap<String, NCell> getNormalCells() {
         TreeMap<String, NCell> _ncells = new TreeMap<String, NCell>();
         for (Map.Entry<String, Cell> entry : Cells.entrySet()) {
-            if (entry.getValue() instanceof NCell)
+            if (entry.getValue() instanceof NCell )
                 _ncells.put(entry.getKey(), (NCell) entry.getValue());
         }
         return _ncells;

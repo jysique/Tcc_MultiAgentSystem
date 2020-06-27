@@ -39,8 +39,9 @@ public class VirusAgent extends EntityAgent {
         if(getLocal().status== MOVING){
             switch(msg.getPerformative()){
                 case INFORM:
-                    if(msg.getContent().equals("die"))
+                    if(msg.getContent().equals("die")){
                         die();
+                    }
                     break;
             }
         }

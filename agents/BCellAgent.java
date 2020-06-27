@@ -9,6 +9,7 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import java.util.Arrays;
 import java.util.Random;
 
 public class BCellAgent extends CellAgent {
@@ -17,9 +18,6 @@ public class BCellAgent extends CellAgent {
     @Override
     protected void setup() {
         super.setup();
-            ServiceDescription sd = new ServiceDescription();
-            sd.setType("BCellAgent");
-            sd.setName("BCellAgentDescription");
         parallel.addSubBehaviour(new TickerBehaviour(this, 5000) {
             @Override
             protected void onTick() { 
@@ -33,15 +31,6 @@ public class BCellAgent extends CellAgent {
                 }
             }
         });
-        
-        parallel.addSubBehaviour(new WakerBehaviour(this, 8000) {
-            @Override
-            protected void onWake() {
-                getLocal().status = GOINGTO;
-                getLocal().setGoal(new Position(20,50));
-            }
-           
-        });
     }
     
     @Override
@@ -51,10 +40,6 @@ public class BCellAgent extends CellAgent {
                 case MOVING: movementAgent();
                     break;
                 case GOINGTO:
-                    getLocal().goToGoal();
-                    if(getLocal().hasArrived()){
-                        getLocal().status = MOVING;
-                    }
                     break;
                 default:
                     break;
@@ -64,23 +49,6 @@ public class BCellAgent extends CellAgent {
 
     @Override
     protected void computeMessage(ACLMessage msg) {
-        ACLMessage reply = msg.createReply();
-        switch(msg.getContent()){
-            case "patrullando":
-                System.out.println(getLocalName() + ": mensaje de " + msg.getSender().getLocalName());
-                reply.setPerformative(ACLMessage.INFORM);
-                reply.setContent("recibido");
-                break;
-            case "encontrado":
-                System.out.println(msg.getContent());
-                reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                reply.setContent("ataquen a la posicion: ");
-            default:
-                reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-                reply.setContent("desconocido");
-                break;
-        }
-        send(reply);
     }
     
         //COMBINACION DE MOV

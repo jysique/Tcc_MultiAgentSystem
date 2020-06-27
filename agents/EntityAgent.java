@@ -34,8 +34,9 @@ public abstract class EntityAgent extends Agent {
                 public void action() {
                     // listen if a greetings message arrives
                     ACLMessage msg = receive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-                    if (msg != null)
+                    if (msg != null){
                         computeMessage(msg);
+                    }
                     else
                         block();
                 }

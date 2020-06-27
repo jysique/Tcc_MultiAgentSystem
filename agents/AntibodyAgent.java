@@ -7,19 +7,20 @@ import classes.Antibody;
 import classes.Virus;
 import jade.core.AID;
 import static classes.Antibody.StatusAntibody.MOVING;
+import static classes.Antibody.StatusAntibody.GOINGTO;
+import classes.BCell;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 
 public class AntibodyAgent extends EntityAgent {
-
+    ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+    
     @Override
     protected void setup() {
         super.setup();
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("AnitBodyAgent");
-        sd.setName("AntiBodyAgentDescription");
     }
     
     public Antibody getLocal() { return Antibody.getLocal(getLocalName()); }
@@ -32,12 +33,35 @@ public class AntibodyAgent extends EntityAgent {
                     movementAgent();
                     patrullando();
                     break;
+                case ATTACKING:
+                    getLocal().goToGoal();
+                    if(getLocal().hasArrived()){
+                       getLocal().status=Antibody.StatusAntibody.MOVING;
+                    }
+                    break;
+                case GOINGTO:
+                    getLocal().goToGoal();
+                    if(getLocal().hasArrived()){
+                       getLocal().status=Antibody.StatusAntibody.MOVING;
+                    }
+                    break;       
             }
         }
+        
     }
 
     @Override
-    protected void computeMessage(ACLMessage msg) { }
+    protected void computeMessage(ACLMessage msg) {
+        if(msg.getContent().contains("ATTACK")){
+            //System.out.println("=>"+msg.getContent());
+            String[] pos = msg.getContent().split(":",4);
+            int posX = Integer.parseInt(pos[1]);
+            int posY = Integer.parseInt(pos[2]);
+            getLocal().status = Antibody.StatusAntibody.ATTACKING;
+            getLocal().setGoal(new Position(posX,posY));
+            //getLocal().setGoal(new Position(getLocal().position.getX(),posY));
+        }
+    }
     
     public void movementAgent(){
         Random aleatorio = new Random(System.currentTimeMillis());
@@ -50,37 +74,21 @@ public class AntibodyAgent extends EntityAgent {
         }
     }
     public void patrullando(){
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        msg.setContent("patrullando");
-        //System.out.println("hola1");
-        //System.out.println("Aqui"+ getLocalName() +" patrullando");
         for (Map.Entry<String, Virus> entry : Virus.getActiveVirus().entrySet()) {
-                Virus virus = entry.getValue();
-                //if (virus.status == Virus.StatusVirus.INFECTING) { 
-                    //System.out.println("hola1");
-                if (Functions.isClose(getLocal().position, virus.position) &&  virus.status!=Virus.StatusVirus.DEAD) {
-                    String msg_temp = "Aqui "+ getLocalName() +" encontrado un virus en "+ getLocal().position.getX() + " ; " + getLocal().position.getY() ;
-                    //System.out.println(msg_temp);
-                    msg.setContent(msg_temp);
-                    eliminar_virus(virus);
-                    getLocal().status = MOVING;
-                    break;
+            Virus v = entry.getValue();
+            if(Functions.isClose(getLocal().position, v.position) &&  v.status!=Virus.StatusVirus.DEAD){
+                v.status = Virus.StatusVirus.DEAD;
+                ACLMessage m_to_antibody = new ACLMessage(ACLMessage.INFORM);
+                m_to_antibody.setContent("ATTACK:" + v.position.getX() + ":" + v.position.getY());
+                for(Map.Entry<String,Antibody> entry_a : Antibody.getAntibodies().entrySet()){
+                    m_to_antibody.addReceiver(new AID(entry_a.getValue().getName(), AID.ISLOCALNAME));
                 }
-                //}
+                send(m_to_antibody);
+                break;
+            }
         }
-        msg.addReceiver(new AID("BCell",AID.ISLOCALNAME));
-        msg.addReceiver(new AID("NCell",AID.ISLOCALNAME));
-        msg.addReceiver(new AID("Cell",AID.ISLOCALNAME));
-        send(msg);
     }
+    
     public void eliminar_virus(Virus virus){
-        //System.out.println("murio el we " + virus.getName());
-        virus.status = Virus.StatusVirus.DEAD;
-        //HostAgent.number_of_Virus -= 1;
-
-        getLocal().status = Antibody.StatusAntibody.MOVING;
-    }
-    public void attack_to_position(Position pos){
-        
     }
 }
