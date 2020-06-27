@@ -8,6 +8,7 @@ import classes.Virus;
 import jade.core.AID;
 import static classes.Antibody.StatusAntibody.MOVING;
 import static classes.Antibody.StatusAntibody.GOINGTO;
+import classes.BCell;
 import jade.lang.acl.ACLMessage;
 import java.util.Arrays;
 import java.util.Map;
@@ -50,14 +51,30 @@ public class AntibodyAgent extends EntityAgent {
 
     @Override
     protected void computeMessage(ACLMessage msg) {
+        ACLMessage reply = msg.createReply();
+        int posX = 0;
+        int posY = 0;
         if(msg.getContent().contains("ATTACK")){
             //System.out.println("=>"+msg.getContent());
             String[] pos = msg.getContent().split(":",4);
-            int posX = Integer.parseInt(pos[1]);
-            int posY = Integer.parseInt(pos[2]);
+            posX = Integer.parseInt(pos[1]);
+            posY = Integer.parseInt(pos[2]);
+            getLocal().status = Antibody.StatusAntibody.ATTACKING;
+            //getLocal().setGoal(new Position(posX,posY));
+            getLocal().setGoal(new Position(getLocal().position.getX(),posY));
+        }else if(msg.getContent().contains("GO")){
+            //System.out.println("=>Trato con " + msg.getSender());
+            reply.setContent("DEAL");
+            send(reply);
+        }
+        else if(msg.getContent().contains("ACCEPT")){
+            System.out.println("=>Trato entre "+getLocalName() +" y " + msg.getSender());
             getLocal().status = Antibody.StatusAntibody.ATTACKING;
             getLocal().setGoal(new Position(posX,posY));
-            //getLocal().setGoal(new Position(getLocal().position.getX(),posY));
+        }
+        else if(msg.getContent().contains("DENIED")){
+            System.out.println("=>Acepte trato con " + msg.getSender());
+            getLocal().status = Antibody.StatusAntibody.MOVING;
         }
     }
     
@@ -81,6 +98,9 @@ public class AntibodyAgent extends EntityAgent {
                 m_to_antibody.setContent("ATTACK:" + v.position.getX() + ":" + v.position.getY());
                 for(Map.Entry<String,Antibody> entry_a : Antibody.getAntibodies().entrySet()){
                     m_to_antibody.addReceiver(new AID(entry_a.getValue().getName(), AID.ISLOCALNAME));
+                }
+                for(Map.Entry<String,BCell> entry_b : BCell.getBCells().entrySet()){
+                    m_to_antibody.addReceiver(new AID(entry_b.getValue().getName(), AID.ISLOCALNAME));
                 }
                 send(m_to_antibody);
                 break;

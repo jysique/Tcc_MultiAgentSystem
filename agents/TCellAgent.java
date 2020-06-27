@@ -3,6 +3,7 @@ package agents;
 import TF.Functions;
 import TF.Position;
 import classes.Antibody;
+import classes.BCell;
 import classes.NCell;
 import classes.TCell;
 import classes.Virus;
@@ -39,7 +40,6 @@ public class TCellAgent extends CellAgent {
                     break;       
             }
         }
-        
     }
 
     @Override
@@ -78,6 +78,21 @@ public class TCellAgent extends CellAgent {
                     m_to_tcells.addReceiver(new AID(entry_t.getValue().getName(), AID.ISLOCALNAME));
                 }
                 send(m_to_tcells);
+                break;
+            }
+        }
+        
+        for (Map.Entry<String, Virus> entry : Virus.getActiveVirus().entrySet()) {
+            Virus v = entry.getValue();
+            if(Functions.isClose(getLocal().position, v.position) &&  v.status==Virus.StatusVirus.INFECTING){
+                //v.status = Virus.StatusVirus.DEAD;
+                //System.out.println(HostAgent.number_of_I_cells);
+                ACLMessage m_to_bcell = new ACLMessage(ACLMessage.INFORM);
+                m_to_bcell.setContent("ATTACK:" + v.position.getX() + ":" + v.position.getY());
+                for(Map.Entry<String,BCell> entry_b :BCell.getBCells().entrySet()){
+                    m_to_bcell.addReceiver(new AID(entry_b.getValue().getName(), AID.ISLOCALNAME));
+                }
+                send(m_to_bcell);
                 break;
             }
         }
