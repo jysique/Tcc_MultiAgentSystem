@@ -2,7 +2,6 @@ package agents;
 
 import TF.Functions;
 import TF.Position;
-import classes.Antibody;
 import classes.BCell;
 import classes.NCell;
 import classes.TCell;
@@ -49,8 +48,8 @@ public class TCellAgent extends CellAgent {
             String[] pos = msg.getContent().split(":",4);
             int posX = Integer.parseInt(pos[1]);
             int posY = Integer.parseInt(pos[2]);
-            getLocal().status = TCell.StatusCell.ATTACKING;
-            getLocal().setGoal(new Position(posX,posY));
+            //getLocal().status = TCell.StatusCell.ATTACKING;
+            //getLocal().setGoal(new Position(posX,posY));
             //getLocal().setGoal(new Position(getLocal().position.getX(),posY));
         }
     }

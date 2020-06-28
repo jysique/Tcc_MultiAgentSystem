@@ -62,7 +62,9 @@ public class AntibodyAgent extends EntityAgent {
             getLocal().status = Antibody.StatusAntibody.ATTACKING;
             //getLocal().setGoal(new Position(posX,posY));
             getLocal().setGoal(new Position(getLocal().position.getX(),posY));
-        }else if(msg.getContent().contains("GO")){
+        }
+        /*
+        else if(msg.getContent().contains("GO")){
             //System.out.println("=>Trato con " + msg.getSender());
             reply.setContent("DEAL");
             send(reply);
@@ -76,6 +78,7 @@ public class AntibodyAgent extends EntityAgent {
             System.out.println("=>Acepte trato con " + msg.getSender());
             getLocal().status = Antibody.StatusAntibody.MOVING;
         }
+*/
     }
     
     public void movementAgent(){

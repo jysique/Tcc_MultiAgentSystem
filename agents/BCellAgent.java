@@ -7,8 +7,6 @@ import classes.BCell;
 import static classes.Cell.StatusCell.GOINGTO;
 import static classes.Cell.StatusCell.MOVING;
 import jade.core.behaviours.TickerBehaviour;
-import jade.core.behaviours.WakerBehaviour;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import java.util.Arrays;
 import java.util.Random;
@@ -74,13 +72,16 @@ public class BCellAgent extends CellAgent {
         else if(msg.getContent().contains("DEAL")){
             //System.out.println("=>" + msg.getSender()+ " acepto");
             if(anticuerpos_attacking <= 5){
-                System.out.println("limite");
+                
                 reply.setContent("ACCEPT");
             }else{
+                anticuerpos_attacking = 0; //para que no se quede todo el tiempo en 5;
+                System.out.println("limite");
+                //SI LLEGA A 5 DENIED
                 reply.setContent("DENIED");
             }
             send(reply);
-            //SI LLEGA A 5 DENIED
+            
         }
     }
     
