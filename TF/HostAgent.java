@@ -20,7 +20,7 @@ public class HostAgent extends Agent {
     public static int number_of_I_cells = 0;
     public static int number_of_B_cells = 10;
     public static int number_of_T_cells = 10;
-    public static int number_of_Virus = 150;
+    public static int number_of_Virus = 300;
     public static int number_of_Antibodies = 0;
     public static boolean ENABLED = false;
     public static boolean INFECTION = false;

@@ -42,7 +42,7 @@ public class NCellAgent extends CellAgent {
     }
 
     @Override
-    protected void computeMessage(ACLMessage msg) { 
+    protected void computeMessage(ACLMessage msg) {
         if (getLocal().status == INFECTED) {
             switch(msg.getPerformative()){
                 case INFORM:
@@ -55,8 +55,8 @@ public class NCellAgent extends CellAgent {
     
     @Override
     protected void die() {
-        super.die();
         HostAgent.number_of_N_cells -= 1;
         getLocal().status = DEAD;
+        super.die();
     }
 }
